@@ -1,75 +1,96 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_intern_sample_app/ui/screen.dart';
 import 'package:flutter/material.dart';
-
-import '../screen.dart';
-import 'create_account_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  const SignInPage({super.key});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
 
 class _SignInPageState extends State<SignInPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  Future<UserCredential> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    final googleAuth = await googleUser?.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    final UserCredential result =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    final user = result.user;
+    final users = user?.uid;
+
+    FirebaseFirestore.instance.collection('user').doc(users).set({
+      'uid': users,
+    });
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('サインインページ'),
-      ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 50, right: 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        backgroundColor: Colors.black12,
+        appBar: AppBar(
+          backgroundColor: Colors.black87,
+        ),
+        body: Stack(
           children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(hintText: 'メールアドレス'),
-            ),
-            const SizedBox(height: 50),
-            TextField(
-              controller: passController,
-              obscureText: true,
-              decoration: const InputDecoration(hintText: 'パスワード'),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('登録をしていない方は'),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateAccountPage()));
+            Positioned(
+                left: 80,
+                top: 160,
+                child: Container(
+                    padding: EdgeInsets.all(20),
+                    alignment: Alignment.center,
+                    width: 270,
+                    height: 270,
+                    child: Image.asset(
+                      'lib/assets/home_2.png',
+                      fit: BoxFit.contain,
+                    ))),
+            Positioned(
+              left: 145,
+              top: 470,
+              child: SizedBox(
+                height: 50,
+                width: 130,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: StadiumBorder(), primary: Colors.white70),
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                    await signInWithGoogle();
+                    if (!mounted) {
+                      return;
+                    }
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) {
+                        return const Screen();
+                      }),
+                      (route) => false,
+                    );
                   },
-                  child: const Text('こちら'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 100),
-            SizedBox(
-              height: 40,
-              width: 100,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => Screen()));
-                },
-                child: const Text(
-                  'ログイン',
-                  style: TextStyle(fontSize: 15),
+                  child: const Text(
+                    'ログイン',
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87),
+                  ),
                 ),
               ),
-            )
+            ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

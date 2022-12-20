@@ -11,10 +11,21 @@ class _ScreenState extends State<Screen> {
     return Scaffold(
       body: pageList[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.white,
+        backgroundColor: Colors.black87,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
-              icon: Icon(Icons.perm_identity_outlined), label: '')
+              icon: Icon(
+                Icons.home_outlined,
+                color: Colors.grey,
+              ),
+              label: ''),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.perm_identity_outlined,
+                color: Colors.grey,
+              ),
+              label: '')
         ],
         currentIndex: selectedIndex,
         onTap: (index) {

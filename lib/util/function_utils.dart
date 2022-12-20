@@ -1,1 +1,3 @@
-class FunctionUtils {}
+class FunctionUtils {
+  static getImageFromGallery() {}
+}

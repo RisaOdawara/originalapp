@@ -2,8 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>NSLocalNetworkUsageDescription</key>
+<string>実機テストの為、ローカルネットワークの接続を許可する。</string>
+<key>CFBundleURLTypes</key>
+    	<array>
+    		<dict>
+    			<key>CFBundleTypeRole</key>
+    			<string>Editor</string>
+    			<key>CFBundleURLSchemes</key>
+    			<array>
+    				<string>com.googleusercontent.apps.20325298147-8e2j49jrg4adqjn1tc8orveqdr8sg8is</string>
+    			</array>
+    		</dict>
+    	</array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+    	<string>https</string>
+    	<string>http</string>
+    </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>This app requires to access your photo library</string>
 	<key>CFBundleDisplayName</key>
 	<string>Firebase Intern Sample App</string>
 	<key>CFBundleExecutable</key>
